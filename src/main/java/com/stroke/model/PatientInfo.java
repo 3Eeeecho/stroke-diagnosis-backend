@@ -85,4 +85,7 @@ public class PatientInfo {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "hematoma_expansion_event")
+    private Boolean hematomaExpansionEvent;
 }

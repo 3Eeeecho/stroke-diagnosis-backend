@@ -134,6 +134,10 @@ public class PatientInfoService {
         }
     }
 
+    public Page<PatientInfo> findHematomaExpansionPatients(int page, int size) {
+        return patientInfoRepository.findByHematomaExpansionEventTrue(PageRequest.of(page, size));
+    }
+
     private PatientInfoResponse toResponse(PatientInfo patient) {
         PatientInfoResponse response = new PatientInfoResponse();
         BeanUtils.copyProperties(patient, response);

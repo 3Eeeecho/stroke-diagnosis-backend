@@ -21,4 +21,6 @@ public interface PatientInfoRepository extends JpaRepository<PatientInfo, String
     long countByImagingExamNumberContaining(String imagingExamNumber);
 
     long countByMrs90DaysGreaterThanEqual(Integer mrs90Days);
+
+    Page<PatientInfo> findByHematomaExpansionEventTrue(Pageable pageable);
 }
