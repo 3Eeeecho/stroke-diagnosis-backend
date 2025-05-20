@@ -40,7 +40,49 @@ public class PatientInfoService {
     public PatientInfoResponse updatePatient(String patientId, PatientInfoRequest request) {
         PatientInfo patient = patientInfoRepository.findById(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("患者不存在"));
-        BeanUtils.copyProperties(request, patient, "patientId");
+        // 只更新非null字段
+        if (request.getMrs90Days() != null)
+            patient.setMrs90Days(request.getMrs90Days());
+        if (request.getImagingExamNumber() != null)
+            patient.setImagingExamNumber(request.getImagingExamNumber());
+        if (request.getAge() != null)
+            patient.setAge(request.getAge());
+        if (request.getGender() != null)
+            patient.setGender(request.getGender());
+        if (request.getPreIchMrs() != null)
+            patient.setPreIchMrs(request.getPreIchMrs());
+        if (request.getHypertensionHistory() != null)
+            patient.setHypertensionHistory(request.getHypertensionHistory());
+        if (request.getStrokeHistory() != null)
+            patient.setStrokeHistory(request.getStrokeHistory());
+        if (request.getDiabetesHistory() != null)
+            patient.setDiabetesHistory(request.getDiabetesHistory());
+        if (request.getAtrialFibrillationHistory() != null)
+            patient.setAtrialFibrillationHistory(request.getAtrialFibrillationHistory());
+        if (request.getCoronaryHeartDiseaseHistory() != null)
+            patient.setCoronaryHeartDiseaseHistory(request.getCoronaryHeartDiseaseHistory());
+        if (request.getSmokingHistory() != null)
+            patient.setSmokingHistory(request.getSmokingHistory());
+        if (request.getAlcoholHistory() != null)
+            patient.setAlcoholHistory(request.getAlcoholHistory());
+        if (request.getOnsetToImagingHours() != null)
+            patient.setOnsetToImagingHours(request.getOnsetToImagingHours());
+        if (request.getBloodPressure() != null)
+            patient.setBloodPressure(request.getBloodPressure());
+        if (request.getVentricularDrainage() != null)
+            patient.setVentricularDrainage(request.getVentricularDrainage());
+        if (request.getHemostaticTreatment() != null)
+            patient.setHemostaticTreatment(request.getHemostaticTreatment());
+        if (request.getIntracranialPressureReduction() != null)
+            patient.setIntracranialPressureReduction(request.getIntracranialPressureReduction());
+        if (request.getAntihypertensiveTreatment() != null)
+            patient.setAntihypertensiveTreatment(request.getAntihypertensiveTreatment());
+        if (request.getSedationAnalgesia() != null)
+            patient.setSedationAnalgesia(request.getSedationAnalgesia());
+        if (request.getAntiemeticGastroprotection() != null)
+            patient.setAntiemeticGastroprotection(request.getAntiemeticGastroprotection());
+        if (request.getNeurotrophicTreatment() != null)
+            patient.setNeurotrophicTreatment(request.getNeurotrophicTreatment());
         patient = patientInfoRepository.save(patient);
         return toResponse(patient);
     }

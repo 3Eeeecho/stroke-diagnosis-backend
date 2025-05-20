@@ -25,6 +25,26 @@ public class PatientInfoController {
     @Autowired
     private PatientInfoService patientInfoService;
 
+    @Operation(summary = "更新患者信息", description = "根据ID更新患者信息")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "更新成功", content = @Content(schema = @Schema(implementation = PatientInfoResponse.class))),
+            @ApiResponse(responseCode = "400", description = "请求参数错误"),
+            @ApiResponse(responseCode = "500", description = "服务器内部错误")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePatient(
+            @Parameter(description = "患者ID", required = true) @PathVariable String id,
+            @Parameter(description = "患者信息请求参数", required = true) @RequestBody PatientInfoRequest request) {
+        try {
+            PatientInfoResponse response = patientInfoService.updatePatient(id, request);
+            return ResponseEntity.ok(new ApiResult(200, response));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.ok(new ApiResult(400, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ApiResult(500, "更新失败: " + e.getMessage()));
+        }
+    }
+
     @Operation(summary = "创建患者信息", description = "创建新的患者信息记录")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "创建成功", content = @Content(schema = @Schema(implementation = PatientInfoResponse.class))),
@@ -75,26 +95,6 @@ public class PatientInfoController {
             return ResponseEntity.ok(new ApiResult(200, stats));
         } catch (Exception e) {
             return ResponseEntity.ok(new ApiResult(500, "获取统计数据失败: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "更新患者信息", description = "根据ID更新患者信息")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "更新成功", content = @Content(schema = @Schema(implementation = PatientInfoResponse.class))),
-            @ApiResponse(responseCode = "400", description = "请求参数错误"),
-            @ApiResponse(responseCode = "500", description = "服务器内部错误")
-    })
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updatePatient(
-            @Parameter(description = "患者ID", required = true) @PathVariable String id,
-            @Parameter(description = "患者信息请求参数", required = true) @RequestBody PatientInfoRequest request) {
-        try {
-            PatientInfoResponse response = patientInfoService.updatePatient(id, request);
-            return ResponseEntity.ok(new ApiResult(200, response));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.ok(new ApiResult(400, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.ok(new ApiResult(500, "更新失败: " + e.getMessage()));
         }
     }
 
