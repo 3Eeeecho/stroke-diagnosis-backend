@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/patients")
@@ -58,6 +60,21 @@ public class PatientInfoController {
             return ResponseEntity.ok(new ApiResult(400, e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.ok(new ApiResult(500, "删除失败: " + e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "获取患者统计数据", description = "获取患者总数和高风险患者数量")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "查询成功"),
+            @ApiResponse(responseCode = "500", description = "服务器内部错误")
+    })
+    @GetMapping("/stats")
+    public ResponseEntity<?> getPatientStats() {
+        try {
+            Map<String, Object> stats = patientInfoService.getPatientStats();
+            return ResponseEntity.ok(new ApiResult(200, stats));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ApiResult(500, "获取统计数据失败: " + e.getMessage()));
         }
     }
 
@@ -113,9 +130,13 @@ public class PatientInfoController {
             @Parameter(description = "90天mRS评分筛选", required = false) @RequestParam(required = false) Integer mrs90Days,
             @Parameter(description = "影像学检查编号筛选", required = false) @RequestParam(required = false) String imagingExamNumber) {
         try {
-            List<PatientInfoResponse> response = patientInfoService.getPatients(page, size, age, mrs90Days,
+            List<PatientInfoResponse> records = patientInfoService.getPatients(page, size, age, mrs90Days,
                     imagingExamNumber);
-            return ResponseEntity.ok(new ApiResult(200, response));
+            long total = patientInfoService.getPatientsTotal(age, mrs90Days, imagingExamNumber);
+            Map<String, Object> result = new HashMap<>();
+            result.put("records", records);
+            result.put("total", total);
+            return ResponseEntity.ok(new ApiResult(200, result));
         } catch (Exception e) {
             return ResponseEntity.ok(new ApiResult(500, "查询失败: " + e.getMessage()));
         }

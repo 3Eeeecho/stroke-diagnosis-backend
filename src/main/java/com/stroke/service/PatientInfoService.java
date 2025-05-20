@@ -11,7 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.HashMap;
 
 @Service
 public class PatientInfoService {
@@ -49,7 +51,8 @@ public class PatientInfoService {
         return toResponse(patient);
     }
 
-    public List<PatientInfoResponse> getPatients(int page, int size, Integer age, Integer mrs90Days, String imagingExamNumber) {
+    public List<PatientInfoResponse> getPatients(int page, int size, Integer age, Integer mrs90Days,
+            String imagingExamNumber) {
         Page<PatientInfo> patientPage;
         PageRequest pageRequest = PageRequest.of(page, size);
         if (age != null) {
@@ -62,6 +65,31 @@ public class PatientInfoService {
             patientPage = patientInfoRepository.findAll(pageRequest);
         }
         return patientPage.getContent().stream().map(this::toResponse).collect(Collectors.toList());
+    }
+
+    public Map<String, Object> getPatientStats() {
+        Map<String, Object> stats = new HashMap<>();
+        // 获取总患者数
+        long totalPatients = patientInfoRepository.count();
+        stats.put("totalPatients", totalPatients);
+
+        // 获取高风险患者数（mRS评分大于等于4的患者）
+        long highRiskPatients = patientInfoRepository.countByMrs90DaysGreaterThanEqual(4);
+        stats.put("highRiskPatients", highRiskPatients);
+
+        return stats;
+    }
+
+    public long getPatientsTotal(Integer age, Integer mrs90Days, String imagingExamNumber) {
+        if (age != null) {
+            return patientInfoRepository.countByAgeGreaterThanEqual(age);
+        } else if (mrs90Days != null) {
+            return patientInfoRepository.countByMrs90Days(mrs90Days);
+        } else if (imagingExamNumber != null && !imagingExamNumber.isEmpty()) {
+            return patientInfoRepository.countByImagingExamNumberContaining(imagingExamNumber);
+        } else {
+            return patientInfoRepository.count();
+        }
     }
 
     private PatientInfoResponse toResponse(PatientInfo patient) {

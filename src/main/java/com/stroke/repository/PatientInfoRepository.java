@@ -13,4 +13,12 @@ public interface PatientInfoRepository extends JpaRepository<PatientInfo, String
     Page<PatientInfo> findByMrs90Days(Integer mrs90Days, Pageable pageable);
 
     Page<PatientInfo> findByImagingExamNumberContaining(String imagingExamNumber, Pageable pageable);
+
+    long countByAgeGreaterThanEqual(Integer age);
+
+    long countByMrs90Days(Integer mrs90Days);
+
+    long countByImagingExamNumberContaining(String imagingExamNumber);
+
+    long countByMrs90DaysGreaterThanEqual(Integer mrs90Days);
 }

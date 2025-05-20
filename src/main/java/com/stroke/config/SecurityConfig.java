@@ -29,6 +29,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // 允许访问登录和注册接口
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
+                        // 允许认证用户访问患者接口
+                        .requestMatchers("/patients/**").authenticated()
                         // 其他请求需要认证
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
